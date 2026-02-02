@@ -1,15 +1,15 @@
 from fastapi import FastAPI, HTTPException
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 app = FastAPI()
 
 class LoginRequest(BaseModel):
-    username: str
-    password: str
+    username: str = Field(...,min_length=5)
+    password: str = Field(...,min_length=8)
 
 @app.post("/login")
 async def login(login_request : LoginRequest):
-    if (login_request.username == "PW" and login_request.password == "123"):
+    if (login_request.username == "PROGRAWEB" and login_request.password == "123123123"):
         return {
             "msg": "Acceso concedido"
         }
