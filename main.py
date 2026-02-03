@@ -21,11 +21,11 @@ class LoginRequest(BaseModel):
     password: str = Field(...,min_length=8)
 
 class Categoria(BaseModel):
-    id: int
+    id: str | None = None
     nombre: str
 
 class Videojuego(BaseModel):
-    id: int
+    id: str | None = None
     nombre: str
     descripcion: str
     url_imagen: str
@@ -54,3 +54,19 @@ async def create_categoria(categoria: Categoria):
     # TODO: Trabajar con base de datos
     categorias.append(categoria)
     return categoria
+
+@app.put("/categorias")
+async def update_categoria(categoria: Categoria):
+    for cat in categorias:
+        if cat.id == categoria.id:
+            # Se encontró la categoria
+            cat.nombre = categoria.nombre
+            return cat
+    raise HTTPException(
+        status_code=400,
+        detail="Categoria no existente."
+    )
+
+@app.delete("/categorias/{categoria_id}")
+async def delete_categoria(categoria_id : str):
+    pass
