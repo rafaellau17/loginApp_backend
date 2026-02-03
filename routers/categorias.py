@@ -1,5 +1,5 @@
 from uuid import uuid4
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Header
 from pydantic import BaseModel
 
 router = APIRouter(
@@ -7,13 +7,23 @@ router = APIRouter(
     tags=["Categorias"]
 )
 
-categorias = []
-
 class Categoria(BaseModel):
     id: str | None = None
     nombre: str
 
-@router.get("/")
+categorias = []
+
+async def verify_token(x_token : str = Header(...)):
+    if x_token != "123456":
+        raise HTTPException(
+            status_code=400,
+            detail={
+                "msg": "Token incorrecto."
+            }
+        )
+    return x_token
+
+@router.get("/", dependencies=[Depends(verify_token)])
 async def list_categorias():
     return {
         "msg": "",
