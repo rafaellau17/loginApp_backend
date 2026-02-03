@@ -85,3 +85,16 @@ async def delete_categoria(categoria_id : str):
         status_code=404,
         detail="Categoria id no encontrada."
     )
+
+# Ejercicio 3
+@app.get("/categorias/{categoria_id}")
+async def get_categoria(categoria_id : str):
+    for cat in categorias:
+        if categoria_id == cat.id:
+            return {
+                "data": cat
+            }
+    raise HTTPException(
+        status_code=404,
+        detail="Categoria id no encontrado."
+    )
