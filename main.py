@@ -63,10 +63,19 @@ async def update_categoria(categoria: Categoria):
             cat.nombre = categoria.nombre
             return cat
     raise HTTPException(
-        status_code=400,
-        detail="Categoria no existente."
+        status_code=404,
+        detail="Categoria id no existente."
     )
 
 @app.delete("/categorias/{categoria_id}")
 async def delete_categoria(categoria_id : str):
-    pass
+    for i, cat in enumerate(categorias):
+        if cat.id == categoria_id:
+            categorias.pop(i)
+            return {
+                "msg": cat.nombre+" eliminado correctamente."
+            }
+    raise HTTPException(
+        status_code=404,
+        detail="Categoria id no encontrada."
+    )
