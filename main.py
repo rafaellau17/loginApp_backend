@@ -1,4 +1,3 @@
-from uuid import uuid4
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, Field
@@ -31,8 +30,6 @@ class Videojuego(BaseModel):
     url_imagen: str
     categoria: Categoria
 
-categorias = []
-
 @app.post("/login")
 async def login(login_request : LoginRequest):
     if (login_request.username == "PROGRAWEB" and login_request.password == "123123123"):
@@ -43,61 +40,6 @@ async def login(login_request : LoginRequest):
         raise HTTPException(
             status_code=400,
             detail="Error en login, credenciales incorrectas")
-    
-@app.get("/categorias")
-async def list_categorias():
-    return {
-        "msg": "",
-        "data": categorias
-    }
-
-@app.post("/categorias")
-async def create_categoria(categoria: Categoria):
-    categoria.id = str(uuid4())
-    # TODO: Trabajar con base de datos
-    categorias.append(categoria)
-    return {
-        "msg": "",
-        "data": categoria
-    }
-
-@app.put("/categorias")
-async def update_categoria(categoria: Categoria):
-    for cat in categorias:
-        if cat.id == categoria.id:
-            # Se encontró la categoria
-            cat.nombre = categoria.nombre
-            return cat
-    raise HTTPException(
-        status_code=404,
-        detail="Categoria id no existente."
-    )
-
-@app.delete("/categorias/{categoria_id}")
-async def delete_categoria(categoria_id : str):
-    for i, cat in enumerate(categorias):
-        if cat.id == categoria_id:
-            categorias.pop(i)
-            return {
-                "msg": cat.nombre+" eliminado correctamente."
-            }
-    raise HTTPException(
-        status_code=404,
-        detail="Categoria id no encontrada."
-    )
-
-# Ejercicio 3
-@app.get("/categorias/{categoria_id}")
-async def get_categoria(categoria_id : str):
-    for cat in categorias:
-        if categoria_id == cat.id:
-            return {
-                "data": cat
-            }
-    raise HTTPException(
-        status_code=404,
-        detail="Categoria id no encontrado."
-    )
 
 videojuegos = []
 
