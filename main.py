@@ -44,13 +44,13 @@ async def login(login_request : LoginRequest):
             status_code=400,
             detail="Error en login, credenciales incorrectas")
     
-@app.post("/categoria")
+@app.get("/categorias")
+async def list_categorias():
+    return categorias
+
+@app.post("/categorias")
 async def create_categoria(categoria: Categoria):
     categoria.id = str(uuid4())
     # TODO: Trabajar con base de datos
     categorias.append(categoria)
     return categoria
-   
-@app.get("/categorias")
-async def list_categorias():
-    return categorias
