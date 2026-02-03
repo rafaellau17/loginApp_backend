@@ -46,14 +46,20 @@ async def login(login_request : LoginRequest):
     
 @app.get("/categorias")
 async def list_categorias():
-    return categorias
+    return {
+        "msg": "",
+        "data": categorias
+    }
 
 @app.post("/categorias")
 async def create_categoria(categoria: Categoria):
     categoria.id = str(uuid4())
     # TODO: Trabajar con base de datos
     categorias.append(categoria)
-    return categoria
+    return {
+        "msg": "",
+        "data": categoria
+    }
 
 @app.put("/categorias")
 async def update_categoria(categoria: Categoria):
