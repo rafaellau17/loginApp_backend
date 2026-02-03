@@ -1,6 +1,8 @@
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, Field
+from routers import categorias
+from routers import videojuegos
 
 app = FastAPI()
 
@@ -41,11 +43,5 @@ async def login(login_request : LoginRequest):
             status_code=400,
             detail="Error en login, credenciales incorrectas")
 
-videojuegos = []
-
-@app.get("/videojuegos")
-async def list_videojuegos():
-    return {
-        "msg": "",
-        "data": videojuegos
-    }
+app.include_router(categorias.router)
+app.include_router(videojuegos.router)
