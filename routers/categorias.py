@@ -1,7 +1,6 @@
 from uuid import uuid4
 from fastapi import APIRouter, HTTPException
-
-from main import Categoria
+from pydantic import BaseModel
 
 router = APIRouter(
     prefix="/categorias",
@@ -9,6 +8,10 @@ router = APIRouter(
 )
 
 categorias = []
+
+class Categoria(BaseModel):
+    id: str | None = None
+    nombre: str
 
 @router.get("/")
 async def list_categorias():

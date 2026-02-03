@@ -1,8 +1,7 @@
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, Field
-from routers import categorias
-from routers import videojuegos
+from routers import categorias, videojuegos
 
 app = FastAPI()
 
@@ -20,17 +19,6 @@ app.add_middleware(
 class LoginRequest(BaseModel):
     username: str = Field(...,min_length=5)
     password: str = Field(...,min_length=8)
-
-class Categoria(BaseModel):
-    id: str | None = None
-    nombre: str
-
-class Videojuego(BaseModel):
-    id: str | None = None
-    nombre: str
-    descripcion: str
-    url_imagen: str
-    categoria: Categoria
 
 @app.post("/login")
 async def login(login_request : LoginRequest):
