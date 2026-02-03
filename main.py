@@ -98,3 +98,12 @@ async def get_categoria(categoria_id : str):
         status_code=404,
         detail="Categoria id no encontrado."
     )
+
+videojuegos = []
+
+@app.get("/videojuegos")
+async def list_videojuegos():
+    return {
+        "msg": "",
+        "data": videojuegos
+    }
