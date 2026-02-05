@@ -1,6 +1,7 @@
 from uuid import uuid4
 from fastapi import APIRouter, Depends, HTTPException, Header
 from pydantic import BaseModel
+from data import accesos
 
 router = APIRouter(
     prefix="/categorias",
@@ -14,9 +15,9 @@ class Categoria(BaseModel):
 categorias = []
 
 async def verify_token(x_token : str = Header(...)):
-    if x_token != "123456":
+    if x_token not in accesos:
         raise HTTPException(
-            status_code=400,
+            status_code=403,
             detail={
                 "msg": "Token incorrecto."
             }
