@@ -15,7 +15,7 @@ class Categoria(BaseModel):
 categorias = []
 
 async def verify_token(x_token : str = Header(...)):
-    if x_token not in accesos:
+    if x_token.encode("utf-8") not in accesos:
         raise HTTPException(
             status_code=403,
             detail={
