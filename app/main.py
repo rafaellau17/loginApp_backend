@@ -1,9 +1,12 @@
 import bcrypt
-from fastapi import FastAPI, HTTPException
+from fastapi import Depends, FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, Field
 from routers import categorias, videojuegos
-from data import accesos
+from .data import accesos
+from .database import get_db
+from sqlalchemy.orm import Session
+from .models import Usuario
 import time
 
 app = FastAPI()
@@ -43,8 +46,29 @@ class LoginRequest(BaseModel):
 #             detail="Error en login, credenciales incorrectas")
 
 @app.post("/login")
-async def login(login_request: LoginRequest):
+async def login(login_request: LoginRequest, db: Session = Depends(get_db)):
+    usuario = db.query(Usuario).filter(
+        Usuario.username == login_request.username
+        Usuario.password == login_request.password
+    )
+
+    if not usuario:
+        raise HTTPException(
+            status_code=400,
+            detail="Error en login, credenciales incorrectas."
+        )          
     
+    hora_actual = time.time_ns()
+    cadena_a_encriptar = f"{login_request.username}-{str(hora_actual)}"
+    
+    #accesos[cadena_hasheada] = {
+    #    "ultimo_login": time.time_ns()
+    #}
+
+    return {
+        "msg": "Acceso concedido",
+        "token": cadena_hasheada
+    }
 
 @app.get("/logout")
 async def logout(token: str):
