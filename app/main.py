@@ -2,7 +2,7 @@ import bcrypt
 from fastapi import Depends, FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, Field
-from routers import categorias, videojuegos
+from .routers import categorias, videojuegos
 from .data import accesos
 from .database import get_db
 from sqlalchemy.orm import Session
@@ -48,9 +48,9 @@ class LoginRequest(BaseModel):
 @app.post("/login")
 async def login(login_request: LoginRequest, db: Session = Depends(get_db)):
     usuario = db.query(Usuario).filter(
-        Usuario.username == login_request.username
+        Usuario.username == login_request.username,
         Usuario.password == login_request.password
-    )
+    ).first()
 
     if not usuario:
         raise HTTPException(
@@ -60,6 +60,7 @@ async def login(login_request: LoginRequest, db: Session = Depends(get_db)):
     
     hora_actual = time.time_ns()
     cadena_a_encriptar = f"{login_request.username}-{str(hora_actual)}"
+    cadena_hasheada = bcrypt.hashpw(cadena_a_encriptar.encode("utf-8"), bcrypt.gensalt())
     
     #accesos[cadena_hasheada] = {
     #    "ultimo_login": time.time_ns()

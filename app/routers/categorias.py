@@ -1,7 +1,7 @@
 from uuid import uuid4
 from fastapi import APIRouter, Depends, HTTPException, Header
 from pydantic import BaseModel
-from data import accesos
+from ..data import accesos
 
 router = APIRouter(
     prefix="/categorias",
