@@ -1,3 +1,4 @@
+import datetime
 from uuid import uuid4
 from fastapi import APIRouter, Depends, HTTPException, Header
 from sqlalchemy.orm import Session
@@ -18,7 +19,8 @@ class Categoria(BaseModel):
 categorias = []
 
 async def verify_token(x_token : str = Header(...), db: Session = Depends(get_db)):
-    db_acceso = db.query(Acceso).filter(Acceso.id == x_token).first()
+    db_query = db.query(Acceso).filter(Acceso.id == x_token)
+    db_acceso = db_query.first()
     if  not db_acceso:
         raise HTTPException(
             status_code=403,
@@ -26,6 +28,15 @@ async def verify_token(x_token : str = Header(...), db: Session = Depends(get_db
                 "msg": "Token incorrecto."
             }
         )
+    
+    db_query.update(
+        {
+            "ultimo_login": datetime.datetime.now()
+        }
+    )
+    db.commit()
+    db.refresh(db_acceso)
+
     return x_token
 
 @router.get("/", dependencies=[Depends(verify_token)])
