@@ -4,7 +4,6 @@ from fastapi import Depends, FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, Field
 from .routers import categorias, videojuegos
-from .data import accesos
 from .database import get_db
 from sqlalchemy.orm import Session
 from .models import Acceso, Usuario

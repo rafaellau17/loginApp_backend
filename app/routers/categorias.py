@@ -1,6 +1,9 @@
 from uuid import uuid4
 from fastapi import APIRouter, Depends, HTTPException, Header
+from sqlalchemy.orm import Session
 from pydantic import BaseModel
+from app.models import Acceso
+from app.database import get_db
 from ..data import accesos
 
 router = APIRouter(
@@ -14,8 +17,9 @@ class Categoria(BaseModel):
 
 categorias = []
 
-async def verify_token(x_token : str = Header(...)):
-    if x_token.encode("utf-8") not in accesos:
+async def verify_token(x_token : str = Header(...), db: Session = Depends(get_db)):
+    db_acceso = db.query(Acceso).filter(Acceso.id == x_token).first()
+    if  not db_acceso:
         raise HTTPException(
             status_code=403,
             detail={
