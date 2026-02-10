@@ -1,5 +1,5 @@
 import uuid
-from sqlalchemy import Column, DateTime, String
+from sqlalchemy import UUID, Column, DateTime, String
 from .database import Base
 
 class Usuario(Base):
@@ -23,3 +23,13 @@ class Acceso(Base):
     ultimo_login = Column(
         DateTime
     )
+
+class Categoria(Base):
+    __tablename__ = "categoria"
+    id = Column(
+        UUID(as_uuid=True),
+        primary_key=True,
+        default=lambda: str(uuid.uuid4()),
+        index=True
+    )
+    nombre = Column(String)

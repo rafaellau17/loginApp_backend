@@ -3,9 +3,8 @@ from uuid import uuid4
 from fastapi import APIRouter, Depends, HTTPException, Header
 from sqlalchemy.orm import Session
 from pydantic import BaseModel
-from app.models import Acceso
+from app.models import Acceso, Categoria
 from app.database import get_db
-from ..data import accesos
 
 router = APIRouter(
     prefix="/categorias",
@@ -15,7 +14,7 @@ router = APIRouter(
 class Categoria(BaseModel):
     id: str | None = None
     nombre: str
-
+    
 categorias = []
 
 async def verify_token(x_token : str = Header(...), db: Session = Depends(get_db)):
@@ -40,17 +39,18 @@ async def verify_token(x_token : str = Header(...), db: Session = Depends(get_db
     return x_token
 
 @router.get("/", dependencies=[Depends(verify_token)])
-async def list_categorias():
+async def list_categorias(db: Session = Depends(get_db)):
+    lista = db.query(Categoria).all()
     return {
         "msg": "",
-        "data": categorias
+        "data": lista
     }
 
 @router.post("/")
 async def create_categoria(categoria: Categoria):
     categoria.id = str(uuid4())
     # TODO: Trabajar con base de datos
-    categorias.routerend(categoria)
+    categorias.append(categoria)
     return {
         "msg": "",
         "data": categoria
