@@ -59,17 +59,19 @@ async def login(login_request: LoginRequest, db: Session = Depends(get_db)):
     }
 
 @app.get("/logout")
-async def logout(token: str):
-    if token.encode("utf-8") in accesos:
-        accesos.pop(token.encode("utf-8"))
-        return {
-            "msg": ""
-        }
+async def logout(token: str, db: Session = Depends(get_db)):
+    db_acceso = db.query(Acceso).filter(Acceso.id == token).first()
 
-    else: 
+    if not db_acceso:
         return {
         "msg": "Token no existe."
         }
+    
+    db.delete(db_acceso)
+    db.commit()
+    return {
+        "msg": ""
+    }
 
 app.include_router(categorias.router)
 app.include_router(videojuegos.router)
