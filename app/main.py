@@ -27,25 +27,6 @@ class LoginRequest(BaseModel):
     username: str = Field(...,min_length=5)
     password: str = Field(...,min_length=8)
 
-# @app.post("/login")
-# async def login(login_request : LoginRequest):
-#     if (login_request.username == "PROGRAWEB" and login_request.password == "123123123"):
-#         hora_actual = time.time_ns()
-#         cadena_a_encriptar = f"{login_request.username}-{str(hora_actual)}"
-#         cadena_hasheada = bcrypt.hashpw(cadena_a_encriptar.encode("utf-8"), bcrypt.gensalt())
-#         accesos[cadena_hasheada] = {
-#             "ultimo_login": time.time_ns()
-#         }
-        
-#         return {
-#             "msg": "Acceso concedido",
-#             "token": cadena_hasheada
-#         }
-#     else:
-#         raise HTTPException(
-#             status_code=400,
-#             detail="Error en login, credenciales incorrectas")
-
 @app.post("/login")
 async def login(login_request: LoginRequest, db: Session = Depends(get_db)):
     usuario = db.query(Usuario).filter(
@@ -71,10 +52,6 @@ async def login(login_request: LoginRequest, db: Session = Depends(get_db)):
     db.add(db_acceso) # Guardamos el acceso en db
     db.commit()
     db.refresh(db_acceso)
-
-    #accesos[cadena_hasheada] = {
-    #    "ultimo_login": time.time_ns()
-    #}
 
     return {
         "msg": "Acceso concedido",
