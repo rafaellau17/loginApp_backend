@@ -1,3 +1,4 @@
+import datetime
 import bcrypt
 from fastapi import Depends, FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
@@ -6,7 +7,7 @@ from .routers import categorias, videojuegos
 from .data import accesos
 from .database import get_db
 from sqlalchemy.orm import Session
-from .models import Usuario
+from .models import Acceso, Usuario
 import time
 
 app = FastAPI()
@@ -62,6 +63,15 @@ async def login(login_request: LoginRequest, db: Session = Depends(get_db)):
     cadena_a_encriptar = f"{login_request.username}-{str(hora_actual)}"
     cadena_hasheada = bcrypt.hashpw(cadena_a_encriptar.encode("utf-8"), bcrypt.gensalt())
     
+    db_acceso = Acceso(
+        id = cadena_hasheada.decode(),
+        ultimo_login = datetime.datetime.now()
+    )
+
+    db.add(db_acceso) # Guardamos el acceso en db
+    db.commit()
+    db.refresh(db_acceso)
+
     #accesos[cadena_hasheada] = {
     #    "ultimo_login": time.time_ns()
     #}
