@@ -1,14 +1,4 @@
-from uuid import uuid4
 from fastapi import APIRouter
-from pydantic import BaseModel
-from ..routers.categorias import Categoria
-
-class Videojuego(BaseModel):
-    id: str | None = None
-    nombre: str
-    descripcion: str
-    url_imagen: str
-    categoria: Categoria
 
 router = APIRouter(
     prefix="/videojuegos",
